@@ -17,6 +17,7 @@ export type ProductItem = {
 
 export interface ProductCard {
     item: ProductItem,
+    // если что, есть такой глагол - order (to order smth.)
     order: (request: ProductItem) => void,
     closeModal: () => void
 }
@@ -38,20 +39,32 @@ export type CustomerInfo = {
 export type FirstOrderStepInfo = Pick<CustomerInfo, 'postalCode' | 'telephoneNumber'>
 export type SecondOrderStepInfo = Pick<CustomerInfo, 'paymentMethod' | 'address'>
 
-export interface Basket {
+export interface IOrderForm {
+	payment: PaymentMethod;
+	email: string;
+	phone: string;
+	address: string;
+}
+
+export interface IOrder extends IOrderForm {
+	items: BasketItem[];
+	total: number;
+}
+
+export interface IBasketFrom {
     items: BasketItem[],
     total: number,
     order: (request: BasketItem[]) => void,
     closeModal: () => void
 }
 
-export interface Order {
+export interface IOrderForm {
     items: BasketItem[],
     confirmOrder: (request: BasketItem[] & CustomerInfo) => void,
     closeModal: () => void
 }
 
-export interface OrderConfirmed {
+export interface IOrderConfirmed {
     message: string,
     closeModal: () => void
 }

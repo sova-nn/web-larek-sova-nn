@@ -23,5 +23,7 @@ export type GetProductListResponce = {
     items: ProductItem[]
 };
 
-
+export interface WebApi {
+    getProductItem: (id: string) => Promise<GetProductItemResponce>
+}
 

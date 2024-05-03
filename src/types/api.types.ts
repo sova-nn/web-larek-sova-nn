@@ -1,3 +1,5 @@
+import { ProductCategory } from "./ui.types";
+
 export type Error = {
     message: string
 };
@@ -12,7 +14,7 @@ export type GetProductItemResponce = {
     description: string,
     image: string,
     title: string,
-    category: string,
+    category: ProductCategory,
     price: number
 };
 
@@ -23,7 +25,5 @@ export type GetProductListResponce = {
     items: ProductItem[]
 };
 
-export interface WebApi {
-    getProductItem: (id: string) => Promise<GetProductItemResponce>
-}
+
 

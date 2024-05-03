@@ -1,3 +1,5 @@
+import { OrderResponce } from "./api.types"
+
 export enum ProductCategory {
     SoftSkill = 'софт-скил',
     HardSkill = 'хард-скил',
@@ -58,13 +60,17 @@ export interface IBasketFrom {
     closeModal: () => void
 }
 
-export interface IOrderForm {
-    items: BasketItem[],
-    confirmOrder: (request: BasketItem[] & CustomerInfo) => void,
-    closeModal: () => void
-}
-
 export interface IOrderConfirmed {
     message: string,
     closeModal: () => void
+}
+
+export interface IProductItem extends ProductItem {};
+
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
+
+export interface WebApi {
+    getProductItem: (id: string) => Promise<ProductItem>;
+    getProductsList: () => Promise<ProductItem[]>;
+    orderProducts: (order: IOrder) => Promise<OrderResponce>;
 }

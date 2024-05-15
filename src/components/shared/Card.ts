@@ -40,10 +40,40 @@ export class ProductCard extends Component<IProductItem> {
 		}
 	}
 
+    set image(value: string) {
+		this.setImage(this._image, value, 'Картинка товара: ' + this._title);
+	}
+
+    set title(value: string) {
+		this.setText(this._title, value);
+	}
+
+    set id(value: string) {
+		this.container.dataset.id = value;
+	}
+
+    set selected(value: boolean) {
+        this._button.disabled = !this._button.disabled ? value : this._button.disabled;
+	}
+
+    set description(value: string) {
+		this.setText(this._description, value);
+	}
+
+    set price(value: string) {
+        const price = value === null ? 'Бесценно' : value + ' синапсов';
+		this.setText(this._price, price);
+        
+		if (!this._button) {
+			return;
+		}
+        this._button.disabled = !value;
+	}
+
 }
 
 export class CatalogItem extends ProductCard {
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super('card', container, actions);
-	}
+	}	
 }

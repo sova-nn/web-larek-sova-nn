@@ -144,18 +144,24 @@ closeModal: метод закрытия модального окна
 Слой архитектуры необходимый для связывания слоя Model и слоя View.
 
 Список событий.
-// TODO: занести события в enum
-1. 'modal: open' - открытие модального окна
-2. 'modal: close' - закрытие модального окна
-3. 'productListCart: change' - изменение товаров в списке корзины (добавление/удаление)
-4. 'cart: open' - открытие корзины
-5. 'cart: change' - изменение в корзине
-6. 'order: open' - открытие формы заказа
-7. 'order: change' - изменение в форме заказа
-8. 'order: submit' - отправка формы заказа
-9. 'payment: change' - изменение способа оплаты заказа
-10. 'contactInfo: change' - изменение контактных данных
-11. 'products: change' - изменение списка товаров
+	// События Карточки товара
+	CardPreviewOpen = 'card: preview',
+	// События Списка товаров
+	ProductsListChange = 'products: change',
+	// События Корзины
+	CartChange = 'cart: change',
+	CartOpen = 'cart: open',
+	CartDelete = 'cart: delete',
+	// События формы заказа
+	OrderOpen = 'order: open',
+	OrderChange = 'order: change',
+	ContactsOpen = 'contacts: open',
+	SuccessClose = 'success: close',
+	// События модалки
+	ModalClose = 'modal: close',
+	// События формы
+	FormSubmit = 'form: submit'
+
 
 
 

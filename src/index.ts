@@ -1,10 +1,11 @@
+import './scss/styles.scss';
 import { EventEmitter } from './components/base/events';
-import { WebLarekApi } from './components/shared/API';
 import { CDN_URL, API_URL } from './utils/constants';
-import { App } from './components/shared/App';
 import { ensureElement, cloneTemplate } from './utils/utils';
-import { Page } from './components/shared/Page';
-import { ProductCard, CatalogItem } from './components/shared/ProductCard';
+import { App, WebLarekApi, Page, CatalogItem, Modal, Order, Cart, Success } from './components/shared';
+import { AppStateEvents, CartItem, IOrder, PaymentMethod, ProductItem } from './types';
+// я не поняла, почему webpack ругается, если этот компонент импортировать из shared :(
+import { Contacts } from './components/shared/Contacts';
 
 const events = new EventEmitter();
 const api = new WebLarekApi(CDN_URL, API_URL);
@@ -19,11 +20,16 @@ const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
 const page = new Page(document.body, events);
+const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
-events.on('products: change', () => {
+const order = new Order(cloneTemplate(orderTemplate), events);
+const basket = new Cart(cloneTemplate(basketTemplate), events);
+const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
+
+events.on(AppStateEvents.ProductsListChange, () => {
 	page.catalog = appData.catalog.map((item) => {
 		const card = new CatalogItem(cloneTemplate(cardCatalogTemplate), {
-			onClick: () => events.emit('card-catalog:select', item),
+			onClick: () => events.emit(AppStateEvents.CardPreviewOpen, item),
 		});
 
 		return card.render({
@@ -34,6 +40,118 @@ events.on('products: change', () => {
 		});
 	});
 });
+
+events.on(AppStateEvents.CardPreviewOpen, (item: ProductItem) => {
+    const card = new CatalogItem(cloneTemplate(cardPreviewTemplate), {
+        onClick: () => events.emit(AppStateEvents.CartChange, item),
+    });
+
+    modal.render({
+		data: card.render({
+			title: item.title,
+			image: item.image,
+			description: item.description,
+			category: item.category,
+			price: item.price,
+			selected: appData.order.items.includes(item.id)
+		}),
+	});
+
+});
+
+events.on(AppStateEvents.CartChange, (item: ProductItem) => {
+    item.selected = true;
+
+    if (item.id) {
+        appData.addToCart(item.id);
+		page.counter++;
+    }
+
+    modal.close();
+});
+
+events.on(AppStateEvents.CartOpen, () => {
+	basket.cartItems = appData.cartItemsList;
+	modal.render({
+		data: basket.render(),
+	});
+});
+
+events.on(AppStateEvents.CartDelete, () => {
+	const ids = basket.getCartIds();
+	appData.updateCartItemList(ids);
+	page.counter--;
+});
+
+events.on(AppStateEvents.OrderOpen, () => {
+	appData.updateTotalSum();
+
+    modal.render({
+        data: order.render({
+            address: '',
+			payment: PaymentMethod.Card,
+            isValid: false,
+            errorsMsgs: []
+        })
+    });
+});
+
+events.on(AppStateEvents.OrderChange, (e: {field?: string, value?: string, payment?: string}) => {
+	const {field, payment, value} = e;
+
+	switch(field) {
+		case 'payment':
+			appData.updatePayment(payment as PaymentMethod);
+			break;
+		case 'address':
+			order.valid = !!value.length;
+			appData.updateAddress(value);
+			break;
+		case 'email':
+			contacts.valid = contacts.validateEmail(value);
+			appData.updateEmail(value);
+			break;
+		case 'phone':
+			contacts.valid = contacts.validatePhoneNumber(value);
+			appData.updatePhone(value);			
+			break;
+	}
+});
+
+events.on(AppStateEvents.ContactsOpen, () => {
+	modal.render({
+        data: contacts.render({
+            email: '',
+			phone: '',
+            isValid: false,
+            errorsMsgs: []
+        })
+    });
+});
+
+events.on(AppStateEvents.FormSubmit, (e) => {
+	const success = new Success(cloneTemplate(successTemplate), events);
+	
+	api.orderProducts(appData.order).then(() => {
+		modal.render({
+			data: success.render({
+				total: appData.order.total
+			}),
+		});
+		appData.flushCart();
+		page.counter = 0;
+	})
+	.catch((err) => {
+		console.error(err);
+	});	
+});
+
+events.on(AppStateEvents.SuccessClose, () => {
+	modal.close();
+});
+
+
+
 
 api
 	.getProductsList()

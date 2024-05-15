@@ -14,21 +14,17 @@ export type ProductItem = {
     image?: string,
     category?: ProductCategory,
     price: number | null,
-    description?: string
+    description?: string,
+    selected?: boolean
 }
 
-export interface ProductCard {
-    item: ProductItem,
-    // если что, есть такой глагол - order (to order smth.)
-    order: (request: ProductItem) => void,
-    closeModal: () => void
-}
+export type CartItem = Pick<ProductItem, 'id' | 'title' | 'price'>
 
-export type BasketItem = Pick<ProductItem, 'id' | 'title' | 'price'>
+export interface ICartItem extends CartItem {};
 
 export enum PaymentMethod {
-    Offline = 'При получении',
-    Online = 'Онлайн'
+    Cash = 'cash',
+    Card = 'card'
 }
 
 export type CustomerInfo = {
@@ -49,20 +45,22 @@ export interface IOrderForm {
 }
 
 export interface IOrder extends IOrderForm {
-	items: BasketItem[];
+	items: string[];
 	total: number;
 }
 
-export interface IBasketFrom {
-    items: BasketItem[],
-    total: number,
-    order: (request: BasketItem[]) => void,
-    closeModal: () => void
+export interface ICart {
+    items: CartItem[],
+    total: number
 }
 
 export interface IOrderConfirmed {
     message: string,
     closeModal: () => void
+}
+
+export interface ISuccess {
+	total: number;
 }
 
 export interface IProductItem extends ProductItem {};
@@ -74,3 +72,14 @@ export interface WebApi {
     getProductsList: () => Promise<ProductItem[]>;
     orderProducts: (order: IOrder) => Promise<OrderResponce>;
 }
+
+export interface IModalData {
+    data: HTMLElement
+}
+
+export enum ComponentSelectors {
+    OrderSuccess = 'order-success',
+    Cart = 'basket',
+    CartItem = 'card',
+    Order = 'order'
+};

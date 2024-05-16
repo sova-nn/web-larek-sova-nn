@@ -20,7 +20,11 @@ export type ProductItem = {
 
 export type CartItem = Pick<ProductItem, 'id' | 'title' | 'price'>
 
-export interface ICartItem extends CartItem {};
+export interface ICartItem {
+    id: string;
+    title: string;
+    price: number | null;
+};
 
 export enum PaymentMethod {
     Cash = 'cash',
@@ -50,7 +54,7 @@ export interface IOrder extends IOrderForm {
 }
 
 export interface ICart {
-    items: CartItem[],
+    items: HTMLElement[],
     total: number
 }
 

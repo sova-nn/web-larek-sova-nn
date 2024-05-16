@@ -22,6 +22,6 @@ export class Success extends Component<ISuccess> {
 	}
 
 	set total(value: number) {
-		this._description.textContent = 'Списано ' + value + ' синапсов';
+		this.setText(this._description, 'Списано ' + value + ' синапсов');
 	}
 }

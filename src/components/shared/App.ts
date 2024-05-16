@@ -39,8 +39,8 @@ export class App extends Model<IAppState> {
     }
 
     updateCartItemList(ids: string[]) {
-        this.order.items = ids;
-        
+        this.order.items = [...ids];
+        this.updateTotalSum();
     }
 
 	addToCart(id: string): void {
@@ -49,13 +49,15 @@ export class App extends Model<IAppState> {
         }
 
         this.order.items.push(id);
+        this.updateTotalSum();
     }
 
-    updateTotalSum(): void {
+    private updateTotalSum(): void {
         this.order.total = this.order.items.reduce((sum, id) => {
             const item = this.catalog.find((it) => it.id === id);
             return sum += item.price;
         }, 0);
+        console.log('total', this.order.total);
     }
 
     updatePayment(payment: PaymentMethod): void {

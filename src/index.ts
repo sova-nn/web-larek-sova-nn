@@ -2,7 +2,7 @@ import './scss/styles.scss';
 import { EventEmitter } from './components/base/events';
 import { CDN_URL, API_URL } from './utils/constants';
 import { ensureElement, cloneTemplate } from './utils/utils';
-import { App, WebLarekApi, Page, CatalogItem, Modal, Order, Cart, Success } from './components/shared';
+import { App, WebLarekApi, Page, CatalogItem, Modal, Order, Cart, Success, CartListItem } from './components/shared';
 import { AppStateEvents, CartItem, IOrder, PaymentMethod, ProductItem } from './types';
 // я не поняла, почему webpack ругается, если этот компонент импортировать из shared :(
 import { Contacts } from './components/shared/Contacts';
@@ -71,21 +71,35 @@ events.on(AppStateEvents.CartChange, (item: ProductItem) => {
 });
 
 events.on(AppStateEvents.CartOpen, () => {
-	basket.cartItems = appData.cartItemsList;
+	const basketItems = appData.cartItemsList.map((item) => {
+		const basketItem = new CartListItem(
+			cloneTemplate(cardBasketTemplate),
+			{
+				onClick: () => events.emit(AppStateEvents.CartDelete, item),
+			}
+		);
+		return basketItem.render({
+			title: item.title,
+			price: item.price
+		});
+	});
+
 	modal.render({
-		data: basket.render(),
+		data: basket.render({
+			items: basketItems,
+			total: appData.order.total,
+		}),
 	});
 });
 
-events.on(AppStateEvents.CartDelete, () => {
-	const ids = basket.getCartIds();
+events.on(AppStateEvents.CartDelete, (item: CartItem) => {
+	const ids = appData.order.items.filter((itemId) => (itemId !== item.id));
 	appData.updateCartItemList(ids);
+	basket.total = appData.order.total;
 	page.counter--;
 });
 
 events.on(AppStateEvents.OrderOpen, () => {
-	appData.updateTotalSum();
-
     modal.render({
         data: order.render({
             address: '',
@@ -151,7 +165,13 @@ events.on(AppStateEvents.SuccessClose, () => {
 });
 
 
+events.on(AppStateEvents.ModalOpen, () => {
+	page.blocked = true;
+});
 
+events.on(AppStateEvents.ModalClose, () => {
+	page.blocked = false;
+});
 
 api
 	.getProductsList()

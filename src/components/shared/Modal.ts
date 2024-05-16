@@ -27,10 +27,10 @@ export class Modal extends Component<IModalData> {
 
     open(): void {
 		this.container.classList.add('modal_active');
+		this.events.emit(AppStateEvents.ModalOpen);
 	}
 
 	close(): void {
-		console.log('close modal from modal');
 		this.container.classList.remove('modal_active');
 		this.data = null!;
 		this.events.emit(AppStateEvents.ModalClose);

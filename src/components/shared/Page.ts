@@ -7,6 +7,7 @@ import { IEvents } from "../base/events";
 interface IPage {
 	counter: number;
 	catalog: HTMLElement[];
+	blocked: boolean;
 }
 
 export class Page extends Component<IPage> {
@@ -38,5 +39,13 @@ export class Page extends Component<IPage> {
 
 	get counter(): number {
 		return +this._counter.textContent;
+	}
+
+	set blocked(value: boolean) {
+		if (value) {
+			this._wrapper.classList.add('page__wrapper_locked');
+		} else {
+			this._wrapper.classList.remove('page__wrapper_locked');
+		}
 	}
 }

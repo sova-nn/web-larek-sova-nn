@@ -28,6 +28,7 @@ export enum AppStateEvents {
 	ContactsOpen = 'contacts: open',
 	SuccessClose = 'success: close',
 	// События модалки
+	ModalOpen = 'modal: open',
 	ModalClose = 'modal: close',
 	// События формы
 	FormSubmit = 'form: submit'

@@ -10,15 +10,6 @@ export class Cart extends Component<ICart> {
 
 	protected _totalPrice = 0;
 	protected _cartIds: string[] = [];
-	// protected _cartItems: string[] = [];
-
-	// get total(): number {
-	// 	return this._totalPrice;
-	// }
-
-	// set total(value: number) {
-	// 	this._totalPrice = value;
-	// }
 
 	private getTotalPriceString(value: number): string {
 		return `${value} синапсов`;
@@ -45,17 +36,6 @@ export class Cart extends Component<ICart> {
 		}
 	}
 
-	// set cartItems(items: CartItem[]) {
-	// 	const cartItemsList = items.map((item) => {
-	// 		this.total += item.price;
-	// 		return this.renderCartItem(item);
-	// 	});
-	// 	this._list.replaceChildren(...cartItemsList);
-
-	// 	this._button?.removeAttribute('disabled');
-	// 	this.changeTotalElem();
-	// }
-
 	changeTotalElem() {
 		this._totalElement.textContent = this.getTotalPriceString(this.total);
 
@@ -75,38 +55,10 @@ export class Cart extends Component<ICart> {
 
 		this._button?.addEventListener('click', () => {
 			events.emit(AppStateEvents.OrderOpen);
-			console.log(AppStateEvents.OrderOpen);
 		});
 	}
 
 	getCartIds(): string[] {
 		return this._cartIds;
 	}
-
-	// я хотела попробовать рендер одного компонента внутри другого
-	// это не противоречит ооп, но я уберу рендер в index.ts, если это необходимо
-	// private renderCartItem(item: CartItem): HTMLElement {
-	// 	const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
-	// 	const basketItem = new CartListItem(
-	// 		cloneTemplate(cardBasketTemplate), {
-	// 			// удаление карточки
-	// 			onClick: () => {
-	// 				this._cartIds = this._cartIds.filter((itemId) => {
-	// 					if (itemId !== item.id) {
-	// 						return true;
-	// 					}
-	// 					return false;
-	// 				});
-	// 				this.total -= item.price;
-	// 				this.changeTotalElem();
-
-	// 				this.events.emit(AppStateEvents.CartDelete);
-	// 			},
-	// 		}
-	// 	);
-	// 	return basketItem.render({
-	// 		title: item.title,
-	// 		price: item.price
-	// 	});
-	// }
 }

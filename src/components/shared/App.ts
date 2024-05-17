@@ -57,7 +57,6 @@ export class App extends Model<IAppState> {
             const item = this.catalog.find((it) => it.id === id);
             return sum += item.price;
         }, 0);
-        console.log('total', this.order.total);
     }
 
     updatePayment(payment: PaymentMethod): void {

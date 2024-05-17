@@ -171,6 +171,10 @@ events.on(AppStateEvents.ModalOpen, () => {
 
 events.on(AppStateEvents.ModalClose, () => {
 	page.blocked = false;
+
+	// при каждом закрытии модалки обнуляем валидность формы
+	contacts.flushForm();
+	order.flushForm();
 });
 
 api

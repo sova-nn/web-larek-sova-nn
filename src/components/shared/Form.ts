@@ -39,4 +39,8 @@ export class Form<T> extends Component<IFormState> {
 		Object.assign(this, inputs);
 		return this.container;
 	}
+
+	flushForm(): void {
+		this.valid = false;
+	}
 }
